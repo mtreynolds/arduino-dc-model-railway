@@ -4,6 +4,8 @@ This project started as a way to combine two hobbies: Model Railways and Compute
 
 There are a few solutions out there which offer different elements of this already, but they can be limiting and can be really expensive.
 
+![Trains at a platform](images/trains-at-platform.JPG)
+
 ## The Goal
 
 The goal was fairly simple: "We want to operate two trains on two tracks in a simple shuttle service. The trains should have realistic acceleration, deceleration and stop in the right place at the station platform."
@@ -37,17 +39,17 @@ Armed with this basic information we decided we would need:
 
  The Arduino is a small microcontroller with lots of pins which allow you to connect physical components and control them with programming code. This would be the brain of the operation, the code running on the Arduino decides when to apply a voltage to the track and move the train and when to not. For example you could say "Apply 12V for 30 seconds, then don't for 30 seconds" and the outcome would be that the train would move for 30 seconds and then stop for 30 seconds.
 
-![image](images/arduino.jpg)
+![Arduino Uno](images/arduino.jpg)
 
 The Arduino Motor Shield takes care of the PWM problem by having 2 dedicated terminals which output a 12V PWM signal. It's called the Motor Shield for a reason, most of these simple DC motors, like the ones used in the basic trains, are all the same design and the Arduinos built-in libraries and compatibility meant hooking this up was very straightforward.
 
-![image](images/arduino-motor-shield.jpg)
+![Arduino Motor Shield](images/arduino-motor-shield.jpg)
 
 ## Prototype
 
 For the prototype we set up a 2.4m track, connected the rails to the 12V and GND pins of the Arduino Motor Shield.
 
-![image](images/prototype-1.jpg)
+![Train on wood plank ptorotype](images/prototype-1.jpg)
 
 We then wrote a basic Arduino program like the following below:
 
@@ -95,7 +97,7 @@ There are a few articles on the internet already about this and a few products a
 
 We purchased a handful of 'hall-effect' sensors. These are very small black chips with 3 pins. They are small enough they can easily be installed under the rails between the sleepers. One pin receives a 5V, one pin is ground (0V) and the other is the 'signal'. In the absence of a strong magnetic field the output on the signal pin is the same 5V it is supplied, but in the presence of a strong magnetic field, such as a train with a magnet stuck to the bottom of it, the signal will be greater than or less than 5V depending on the polarity of the magnet. E.g. it might be 6V or 4V.
 
-![image](images/hall-effect-sensor-wiring.jpg)
+![Hall Effect Sensor Wiring](images/hall-effect-sensor-wiring.jpg)
 
 By attaching a magnet to the underside of the train we could put these sensors under the track and the Arduino would get a signal each time the train passed over it.
 
@@ -105,7 +107,7 @@ It is with these hall-effect sensors that we made the first major mistake. Initi
 
 Fortunately the rest of the world is aware of this and solved it with some slightly different components you can buy which are simply these sensors with some capacitors and resistors which help to smooth out this problem and make it a much more binary operation. Unfortunately for us we didn't realise this until we had installed them and had the difficult task of ripping them out and putting in the new ones!
 
-![image](images/hall-effect-module.jpg)
+![Hall Effect Module](images/hall-effect-module.jpg)
 
 ## Reading the Sensors in the Arduino Code
 
@@ -130,7 +132,7 @@ boolean hasSensorBeenTriggered() {
 
 The layout below shows the track we were working on. The idea was that we had two separate tracks each with a station at either end. A train would move from station to station on one track and then wait whilst the train on the other track moved. It would give this alternating shuttle service. It is possible to get them to move at the same time but it was a complexity challenge we had not yet approached. (Ignore the points in the layout, this is discussed in a later section).
 
-![image](images/track-layout-2.jpg)
+![Track Layout Diagram](images/track-layout-2.jpg)
 
 To tackle this problem we have to split the tracks into sections. DC trains are not like DCC trains, if the rails have power the trains move, so to run multiple trains you have to be able to power up individual sections only. This is simply done and combined with a few insulating track connectors to ensure isolation between rails. See the layout image above to see how we decided to split up the sections.
 
@@ -140,7 +142,7 @@ If we go back to our Arduino Motor Shield it only has 2 12V DC outputs and we ha
 
 Relays are electromechanical switches. You can complete or break a circuit in the same way you can with any manual switch except you can control whether it is open or closed by supplying a voltage to a pin that controls the relay. There may be far better solutions but this is the one we found.
 
-![image](images/relays.jpg)
+![Relay board](images/relays.jpg)
 
 These blue blocks are relays and each one of these is our electro-mechanical switch for each section of track. We had to get a slightly larger one than the picture above.
 
@@ -153,13 +155,18 @@ The final code for the Arduino ended up quite complicated and too difficult to s
 
 The Arduino code had to map every pin to every sensor and section of track and then logically understand the order of trains moving. E.g. from the layout diagram a train moves from Station 1A to Station 1B by enabling track sections 1A and 1B and setting the direction of travel to forwards.
 
-The prototype board had become a jumbled mess of wires by the time we finished adding components. It became incredibly important to be organised and to track each connection with labels and tape. We had 5 station sensors and 5 track sections all of which had to be wired to the correct pin on the arduino.
+![Prototype board](images/prototype-2.jpg)
 
-![image](images/prototype-2.jpg)
+The prototype board was a jumbled mess of wires by the end of planning and by the end of installing it was somehow much, much worse. It became incredibly important to be organised and to track each connection with labels and tape. We had 5 station sensors and 5 track sections all of which had to be wired to the correct pin on the arduino.
+
+![Prototype Board Installed](images/messy-wires.jpg)
 
 But, with all the sensors wired and placed under the tracks at the appropriate points and with the magnets attached to the bottom of the trains we were able to achieve our goal. The install was relatively easy. The only problem we had was using the wrong sensors as discussed earlier which led to a lot of scratched heads and complicated debugging.
 
 But after that improvement, both trains run extremely reliably between their stations and operate their shuttle service.
+
+![Trais operating gif](images/trains-moving.gif)
+
 
 # Future Extensions
 
@@ -167,7 +174,7 @@ There are some future additions we would like to explore but haven't yet.
 
 ## Points
 
-Particularly attentive readers may have spotted in the final prototype board a second set of relays labeled 'Points relay' and they may have noticed in the track diagram multiple sections of points. Writing our code in the Arduino it is possible to trigger a set of points to switch automatically and thus increasing the complexity of the layout.
+Particularly attentive readers may have spotted in the final prototype board a second set of relays labeled 'Points relay' and they may have noticed in the track diagram multiple sections of points. Writing our code for the Arduino it is possible to trigger a set of points to switch automatically. This would greatly expand the illusion of the model railway and increase the complexity of the routes they could operate.
 
 The automatic movement of points is done by a points motor. These take various forms but when activated by an electronic signal they will quickly push or pull the points across. These points motors typically operate at a slightly higher voltage and more importantly a higher current. This is due to the physical force required to push these points through so rapidly.
 
@@ -185,6 +192,6 @@ On DC the speed of the motor is proportional to the voltage applied to it. We ha
 
 Early on in prototyping we found that the internal clock of the Arduino was pretty unreliable. This would mean sleeps and pauses would sometimes be ignored and the trains would stop at their station and instantly start moving backwards. This appeared to be a known issue with Arduinos and was solved by using an Arduino compatible real-time clock (RTC).
 
-![image](images/rtc.jpg)
+![Arduino RTC Module](images/rtc.jpg)
 
 This simple module can keep real time so we could more reliably track how many seconds the train had been waiting at a station. As this module actually keeps the date and time we could use it to operate a timetable which takes into account the actual time of day and have different routes in the morning and at night.
