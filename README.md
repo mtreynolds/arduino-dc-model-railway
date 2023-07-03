@@ -201,4 +201,4 @@ This simple module can keep real time so we could more reliably track how many s
 
 # Part 2
 
-Part 2 now available (here [a relative link](phase-2.md))
+[Part 2](phase-2.md) is now available

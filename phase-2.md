@@ -1,6 +1,6 @@
 # Revive your DC Layout with Automation - Part 2
 
-(Part 1 here [a relative link](README.md))
+If you havn't read it already, see [Part 1](README.md)
 
 ## Automating Points
 
