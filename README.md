@@ -1,6 +1,6 @@
 # Revive your DC Layout with Automation
 
-This project started as a way to combine two hobbies: Model Railways and Computer Programming. It seemed to us that these should be a natural fit. By combining the two you should be able to program your trains to operate automatically, running on custom timetables and even integrating with other physical components. 
+This project started as a way to combine two hobbies: Model Railways and Computer Programming. It seemed to us that these should be a natural fit. By combining the two you should be able to program your trains to operate automatically, running on custom timetables and even integrating with other physical components.
 
 There are a few solutions out there which offer different elements of this already, but they can be limiting and can be really expensive.
 
@@ -11,12 +11,13 @@ There are a few solutions out there which offer different elements of this alrea
 The goal was fairly simple: "We want to operate two trains on two tracks in a simple shuttle service. The trains should have realistic acceleration, deceleration and stop in the right place at the station platform."
 
 ## DC not DCC
-   
+
 We already had a substantial DCC layout which seemed like the natural place to start but part of the joy of having a model railway is operating your own trains so we were keen not to lose this ability. In addition to this, DCC components seemed much more electrically fragile than their older DC alternatives. The chance of us accidentally shorting the track or providing the wrong voltage seemed quite likely as we experimented with our solution and we didn't fancy burning out the chips in any expensive DCC trains.
 
 Fortunately, we had some older DC trains and this actually made the project better. Not only could we keep the DCC layout as it is with the manual control but we could revitalize the old DC trains and integrate them with the rest of the layout. DC trains would operate their automated shuttle service whilst the DCC trains would be manually operated and together it would enhance the layout.
 
 # Phase 1: Moving a Train
+
 ## Understanding DC Trains
 
 Before we go any further we should point out that we are not experts in this at all. We are two enthusiasts who just experimented and researched as best we could.
@@ -31,13 +32,13 @@ We have to dive a little deeper into how these motors work as simply applying a 
 
 Armed with this basic information we decided we would need:
 
- - Arduino UNO (As I already had one, but it's cheap and perfectly suited to this)
- - Arduino Motor Shield
- - DC Train
- - Track
- - Wire etc
+- Arduino UNO (As I already had one, but it's cheap and perfectly suited to this)
+- Arduino Motor Shield
+- DC Train
+- Track
+- Wire etc
 
- The Arduino is a small microcontroller with lots of pins which allow you to connect physical components and control them with programming code. This would be the brain of the operation, the code running on the Arduino decides when to apply a voltage to the track and move the train and when to not. For example you could say "Apply 12V for 30 seconds, then don't for 30 seconds" and the outcome would be that the train would move for 30 seconds and then stop for 30 seconds.
+The Arduino is a small microcontroller with lots of pins which allow you to connect physical components and control them with programming code. This would be the brain of the operation, the code running on the Arduino decides when to apply a voltage to the track and move the train and when to not. For example you could say "Apply 12V for 30 seconds, then don't for 30 seconds" and the outcome would be that the train would move for 30 seconds and then stop for 30 seconds.
 
 ![Arduino Uno](images/arduino.jpg)
 
@@ -84,6 +85,7 @@ void loop() {
 The Arduino operates on a loop and this code inside this loop function will just continuously get called.
 
 With this basic setup the train moved back and forth in a shuttle-like motion. Success! But this first trial highlighted a number of issues:
+
 1. We need a better mechanism than relying on delays in order to keep the train running correctly
 2. We want to smooth the acceleration as it currently goes from 0 to Max straight away (More about this at the end)
 
@@ -116,6 +118,7 @@ Another big problem appeared during this time. The initial prototype made use of
 The Arduino needed to loop and check the sensor multiple times a second if possible. So instead of waiting for 3 seconds, we could take the current time, add 3 seconds to it, and then store that variable. Then every loop we could check for sensor trigger but also check if the current time had exceeded the stored time or the 'wait' time. This also led to a problem that the internal clock of the Arduino was not accurate enough and we had to use an external module. More about that in [Date Time Module](#date-time-module).
 
 To read the sensor in the Arduino:
+
 ```C
 boolean hasSensorBeenTriggered() {
     int sensorVoltage = analogRead(sensorSignalPin);
@@ -149,6 +152,7 @@ These blue blocks are relays and each one of these is our electro-mechanical swi
 # Phase 4: Final Build
 
 The final code for the Arduino ended up quite complicated and too difficult to share but the flow of logic for each loop is something like this:
+
 - Check for any sensors that may have been triggered
 - If any have been triggered, stop the train by switching off that section of track
 - Look at the routes to work out which section of track to enable next
@@ -166,7 +170,6 @@ But, with all the sensors wired and placed under the tracks at the appropriate p
 But after that improvement, both trains run extremely reliably between their stations and operate their shuttle service.
 
 ![Trais operating gif](images/trains-moving.gif)
-
 
 # Future Extensions
 
@@ -195,3 +198,7 @@ Early on in prototyping we found that the internal clock of the Arduino was pret
 ![Arduino RTC Module](images/rtc.jpg)
 
 This simple module can keep real time so we could more reliably track how many seconds the train had been waiting at a station. As this module actually keeps the date and time we could use it to operate a timetable which takes into account the actual time of day and have different routes in the morning and at night.
+
+# Part 2
+
+Part 2 now available (here [a relative link](phase-2.md))
